@@ -9,7 +9,7 @@ namespace SpaceTest;
 
 public partial class Dimension : Entity
 {
-	[Net] public IList<IDimensionalEntity> Entities { get; private set; }
+	[Net] public IList<DimensionalEntity> Entities { get; private set; }
 
 	// purposefully not networked
 	public bool Ready { get; private set; } = false;

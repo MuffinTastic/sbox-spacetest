@@ -7,7 +7,7 @@ using Sandbox;
 
 namespace SpaceTest;
 
-public partial class DimensionalEntity : Entity, IDimensionalEntity
+public partial class DimensionalEntity : Entity
 {
 	[Net] public Dimension Dimension { get; set; }
 
@@ -20,5 +20,18 @@ public partial class DimensionalEntity : Entity, IDimensionalEntity
 	{
 		Dimension = dimension;
 		Dimension.Entities.Add( this );
+	}
+
+	public override async void ClientSpawn()
+	{
+		await Util.AwaitCondition( () => Dimension is not null );
+		await Dimension.AwaitReady();
+
+		InitSceneObject();
+	}
+
+	public virtual void InitSceneObject()
+	{
+
 	}
 }

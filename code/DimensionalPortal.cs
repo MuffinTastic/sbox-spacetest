@@ -8,10 +8,8 @@ using Sandbox;
 
 namespace SpaceTest;
 
-public partial class DimensionalPortal : Entity, IDimensionalEntity
+public partial class DimensionalPortal : DimensionalEntity
 {
-	public Dimension Dimension { get; set; }
-
 	[Net] public Dimension Dimension1 { get; set; }
 	[Net] public Dimension Dimension2 { get; set; }
 
@@ -78,13 +76,16 @@ public partial class DimensionalPortal : Entity, IDimensionalEntity
 
 	public override void ClientSpawn()
 	{
+		// overriding because the base ClientSpawn awaits on Dimension
+		// which will always be null for a portal
+
 		InitSceneObject();
 	}
 
 	public SceneDimensionalPortal _scenePortal1;
 	public SceneDimensionalPortal _scenePortal2;
 
-	public async void InitSceneObject()
+	public override async void InitSceneObject()
 	{
 		await Util.AwaitCondition( () => Dimension1 is not null && Dimension2 is not null );
 		var dim1 = Dimension1.AwaitReady();

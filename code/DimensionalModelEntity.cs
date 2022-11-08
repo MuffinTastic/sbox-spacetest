@@ -7,7 +7,7 @@ using Sandbox;
 
 namespace SpaceTest;
 
-public partial class DimensionalModelEntity : DimensionalEntity, IDimensionalEntity
+public partial class DimensionalModelEntity : DimensionalEntity
 {
 	[Net, Change] public Model DimensionModel { get; set; }
 
@@ -38,15 +38,10 @@ public partial class DimensionalModelEntity : DimensionalEntity, IDimensionalEnt
 	public override void ClientSpawn()
 	{
 		base.ClientSpawn();
-
-		InitSceneObject();
 	}
 
-	public async void InitSceneObject()
+	public override void InitSceneObject()
 	{
-		await Util.AwaitCondition( () => Dimension is not null );
-		await Dimension.AwaitReady();
-
 		SceneModelManager = new DimensionSceneModelManager( this, DimensionModel );
 		SceneModelManager.Init( Dimension );
 	}
