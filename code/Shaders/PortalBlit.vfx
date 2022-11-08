@@ -1,0 +1,112 @@
+HEADER
+{
+	Description = "Blit portal views";
+}
+
+MODES
+{
+    Default();
+    VrForward();
+}
+
+COMMON
+{
+    #include "system.fxc"
+	#include "common.fxc"
+
+	struct VertexInput
+	{
+		float3 vPositionOs : POSITION < Semantic( PosXyz ); >;
+		float2 vTexCoord : TEXCOORD0 < Semantic( LowPrecisionUv ); >;
+	};
+
+	struct PixelInput
+	{
+		float2 uv 	: TEXCOORD0;
+#if ( PROGRAM == VFX_PROGRAM_VS )
+		float4 vPositionPs : SV_Position;
+#endif
+#if ( PROGRAM == VFX_PROGRAM_PS )
+		float4 vPositionSs : SV_Position;
+#endif
+	};
+}
+
+VS
+{
+	//
+	// Main
+	//
+	PixelInput MainVs( VertexInput i )
+	{
+		PixelInput o;
+        //o.Position = float4(i.vPositionOs.xyz, 1.0f);
+		o.vPositionPs = Position3WsToPs(i.vPositionOs);
+		//o.vPositionSs = float4(i.vPositionOs.xyz, 1.0f);
+        o.uv = i.vTexCoord;
+
+		return o;
+	}
+}
+
+PS
+{
+    //DynamicCombo( D_PORTAL_ID, 0..7, Sys( PC ) );
+	DynamicCombo( D_FRONT, 0..1, Sys( PC ) );
+
+	//Blend SrcAlpha OneMinusSrcAlpha
+	RenderState( BlendEnable, false );
+
+	//Cull Off ZWrite Off ZTest Always
+
+	#if D_FRONT == 1
+	RenderState( CullMode, FRONT );
+	#else
+	RenderState( CullMode, BACK );
+	#endif
+	//RenderState( CullMode, NONE );
+
+    RenderState( DepthWriteEnable, true );
+    RenderState( DepthEnable, true );
+
+
+	CreateTexture2D( _ColorBuffer ) < Attribute( "ColorBuffer" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	/*CreateTexture2D( _ColorBuffer0 ) < Attribute( "ColorBuffer0" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	CreateTexture2D( _ColorBuffer1 ) < Attribute( "ColorBuffer1" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	CreateTexture2D( _ColorBuffer2 ) < Attribute( "ColorBuffer2" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	CreateTexture2D( _ColorBuffer3 ) < Attribute( "ColorBuffer3" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	CreateTexture2D( _ColorBuffer4 ) < Attribute( "ColorBuffer4" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	CreateTexture2D( _ColorBuffer5 ) < Attribute( "ColorBuffer5" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	CreateTexture2D( _ColorBuffer6 ) < Attribute( "ColorBuffer6" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	CreateTexture2D( _ColorBuffer7 ) < Attribute( "ColorBuffer7" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;*/
+
+	//
+	// Main
+	//
+	float4 MainPs( PixelInput i ) : SV_Target0
+	{
+		float2 screenUv = CalculateViewportUv(i.vPositionSs.xy);
+		float4 color = Tex2D(_ColorBuffer, screenUv) * float4(0.1, 0.1, 0.1, 1.0);
+	
+	/*
+	#if D_PORTAL_ID == 0
+		color = Tex2D(_ColorBuffer0, screenUv);
+	#elif D_PORTAL_ID == 1
+		color = Tex2D(_ColorBuffer1, screenUv);
+	#elif D_PORTAL_ID == 2
+		color = Tex2D(_ColorBuffer2, screenUv);
+	#elif D_PORTAL_ID == 3
+		color = Tex2D(_ColorBuffer3, screenUv);
+	#elif D_PORTAL_ID == 4
+		color = Tex2D(_ColorBuffer4, screenUv);
+	#elif D_PORTAL_ID == 5
+		color = Tex2D(_ColorBuffer5, screenUv);
+	#elif D_PORTAL_ID == 6
+		color = Tex2D(_ColorBuffer6, screenUv);
+	#else // D_PORTAL_ID == 7
+		color = Tex2D(_ColorBuffer7, screenUv);
+	#endif*/
+
+		return color;// * float4(0.1, 0.1, 0.1, 1.0);
+	}
+}
