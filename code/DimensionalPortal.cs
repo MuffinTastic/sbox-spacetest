@@ -165,11 +165,11 @@ public partial class DimensionalPortal : DimensionalEntity
 		
 		if ( IsConnected( Pawn.LocalDimension ) && SpaceGame.Debug )
 		{
+			//DebugOverlay.Box( Bounds.Mins, Bounds.Maxs, Color.Yellow.WithAlpha( 0.5f ), depthTest: false );
 			DebugOverlay.Line( Position + VertexPositions[0], Position + VertexPositions[1], Color.Green, depthTest: false );
 			DebugOverlay.Line( Position + VertexPositions[0], Position + VertexPositions[4], Color.Green, depthTest: false );
-			DebugOverlay.Line( Position + VertexPositions[2], Position + VertexPositions[3], Color.Green, depthTest: false );
+			DebugOverlay.Line( Position + VertexPositions[1], Position + VertexPositions[2], Color.Green, depthTest: false );
 			DebugOverlay.Line( Position + VertexPositions[3], Position + VertexPositions[4], Color.Green, depthTest: false );
-			DebugOverlay.Box( Bounds.Mins, Bounds.Maxs, Color.Yellow.WithAlpha( 0.5f ), depthTest: false );
 		}
 	}
 }
