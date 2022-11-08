@@ -14,7 +14,7 @@ COMMON
     #include "system.fxc"
 	#include "common.fxc"
 
-	struct VertexInput
+	struct VS_INPUT
 	{
 		float3 vPositionOs : POSITION < Semantic( PosXyz ); >;
 		float2 vTexCoord : TEXCOORD0 < Semantic( LowPrecisionUv ); >;
@@ -37,7 +37,7 @@ VS
 	//
 	// Main
 	//
-	PixelInput MainVs( VertexInput i )
+	PixelInput MainVs( VS_INPUT i )
 	{
 		PixelInput o;
         //o.Position = float4(i.vPositionOs.xyz, 1.0f);
