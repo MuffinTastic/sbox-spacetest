@@ -51,7 +51,6 @@ VS
 
 PS
 {
-    //DynamicCombo( D_PORTAL_ID, 0..7, Sys( PC ) );
 	DynamicCombo( D_FRONT, 0..1, Sys( PC ) );
 
 	//Blend SrcAlpha OneMinusSrcAlpha
@@ -64,21 +63,12 @@ PS
 	#else
 	RenderState( CullMode, BACK );
 	#endif
-	//RenderState( CullMode, NONE );
 
     RenderState( DepthWriteEnable, true );
     RenderState( DepthEnable, true );
 
 
 	CreateTexture2D( _ColorBuffer ) < Attribute( "ColorBuffer" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-	/*CreateTexture2D( _ColorBuffer0 ) < Attribute( "ColorBuffer0" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-	CreateTexture2D( _ColorBuffer1 ) < Attribute( "ColorBuffer1" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-	CreateTexture2D( _ColorBuffer2 ) < Attribute( "ColorBuffer2" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-	CreateTexture2D( _ColorBuffer3 ) < Attribute( "ColorBuffer3" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-	CreateTexture2D( _ColorBuffer4 ) < Attribute( "ColorBuffer4" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-	CreateTexture2D( _ColorBuffer5 ) < Attribute( "ColorBuffer5" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-	CreateTexture2D( _ColorBuffer6 ) < Attribute( "ColorBuffer6" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
-	CreateTexture2D( _ColorBuffer7 ) < Attribute( "ColorBuffer7" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;*/
 
 	//
 	// Main
@@ -87,26 +77,6 @@ PS
 	{
 		float2 screenUv = CalculateViewportUv(i.vPositionSs.xy);
 		float4 color = Tex2D(_ColorBuffer, screenUv) * float4(0.1, 0.1, 0.1, 1.0);
-	
-	/*
-	#if D_PORTAL_ID == 0
-		color = Tex2D(_ColorBuffer0, screenUv);
-	#elif D_PORTAL_ID == 1
-		color = Tex2D(_ColorBuffer1, screenUv);
-	#elif D_PORTAL_ID == 2
-		color = Tex2D(_ColorBuffer2, screenUv);
-	#elif D_PORTAL_ID == 3
-		color = Tex2D(_ColorBuffer3, screenUv);
-	#elif D_PORTAL_ID == 4
-		color = Tex2D(_ColorBuffer4, screenUv);
-	#elif D_PORTAL_ID == 5
-		color = Tex2D(_ColorBuffer5, screenUv);
-	#elif D_PORTAL_ID == 6
-		color = Tex2D(_ColorBuffer6, screenUv);
-	#else // D_PORTAL_ID == 7
-		color = Tex2D(_ColorBuffer7, screenUv);
-	#endif*/
-
 		return color;// * float4(0.1, 0.1, 0.1, 1.0);
 	}
 }
