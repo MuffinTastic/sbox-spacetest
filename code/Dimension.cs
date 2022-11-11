@@ -60,7 +60,8 @@ public partial class Dimension : Entity
 	{
 		SceneCamera.Position = Map.Camera.Position;
 		SceneCamera.Rotation = Map.Camera.Rotation;
-		SceneCamera.FieldOfView = Map.Camera.FieldOfView;
+		// See: PerformS1FovHack
+		SceneCamera.FieldOfView = MathF.Atan( MathF.Tan( Map.Camera.FieldOfView.DegreeToRadian() * 0.5f ) * (Screen.Aspect * 0.75f) ).RadianToDegree() * 2.0f;
 		SceneCamera.ZFar = Map.Camera.ZFar;
 		SceneCamera.ZNear = Map.Camera.ZNear;
 	}
