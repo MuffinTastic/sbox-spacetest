@@ -42,6 +42,7 @@ VS
 		PixelInput o;
         //o.Position = float4(i.vPositionOs.xyz, 1.0f);
 		o.vPositionPs = Position3WsToPs(i.vPositionOs);
+		o.vPositionPs = o.vPositionPs /= o.vPositionPs.z;
 		//o.vPositionSs = float4(i.vPositionOs.xyz, 1.0f);
         o.uv = i.vTexCoord;
 
