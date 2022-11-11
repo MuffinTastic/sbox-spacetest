@@ -217,7 +217,7 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 		_parent = parent;
 		_dimension = dimension;
 		_targetDimension = targetDimension;
-		PortalBlit = Material.Load( "materials/portalblit.vmat" );
+		PortalBlit = Material.Load( "materials/portalblit.vmat" ).CreateCopy();
 
 		Flags.IsOpaque = true;
 		Flags.IsTranslucent = false;
