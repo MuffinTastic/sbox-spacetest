@@ -8,7 +8,6 @@ using Sandbox;
 namespace SpaceTest;
 public class DimensionBlitHook : RenderHook
 {
-	private static Material PortalBlit = Material.Load( "materials/portalblit.vmat" );
 	private static Material ScreenBlit = Material.Load( "materials/screenblit.vmat" );
 
 	public DimensionBlitHook()
@@ -22,8 +21,6 @@ public class DimensionBlitHook : RenderHook
 		foreach ( var dimension in dimensions )
 			dimension.UpdateSceneCameraFromGlobal();
 	}
-
-	private static int LastTick = 0;
 
 	public override void OnStage( SceneCamera target, Stage renderStage )
 	{

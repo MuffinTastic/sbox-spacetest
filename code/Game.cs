@@ -24,12 +24,14 @@ public partial class SpaceGame : Sandbox.Game
 	{
 		if ( IsServer )
 		{
+			_ = new GameHud();
+
 			DimensionManager = new DimensionManager();
 
-			var dimension1 = DimensionManager.NewDimension(); // new Dimension();
-			var dimension2 = DimensionManager.NewDimension(); // new Dimension();
-			var dimension3 = DimensionManager.NewDimension(); // new Dimension();
-			var dimension4 = DimensionManager.NewDimension(); // new Dimension();
+			var dimension1 = DimensionManager.NewDimension();
+			var dimension2 = DimensionManager.NewDimension();
+			var dimension3 = DimensionManager.NewDimension();
+			var dimension4 = DimensionManager.NewDimension();
 
 			await Util.AwaitCondition( () => DimensionManager is not null );
 			await DimensionManager.WaitForDimensions();
@@ -66,7 +68,6 @@ public partial class SpaceGame : Sandbox.Game
 			light2.QuadraticAttenuation = 0.0f;
 
 			var light3 = new DimensionalLight( dimension2 );
-			//light3.Position = Vector3.Right * 50.0f + Vector3.Forward * 25.0f + Vector3.Down * 30.0f;
 			light3.Position = new Vector3( -440.0f, 600.0f, 96.0f );
 			light3.Radius = 500.0f;
 			light3.LinearAttenuation = 25.0f;
@@ -75,19 +76,19 @@ public partial class SpaceGame : Sandbox.Game
 
 
 
-			var portal = DimensionManager.NewPortal( dimension1, dimension2 ); // new DimensionalPortal( dimension1, dimension2 );
+			var portal = DimensionManager.NewPortal( dimension1, dimension2 );
 			portal.Rotation = Rotation.FromYaw( -45.0f );
 			portal.Position += portal.Rotation.Forward * 200.0f;
 
-			var portal2 = DimensionManager.NewPortal( dimension3, dimension2 ); // new DimensionalPortal( dimension3, dimension2 );
+			var portal2 = DimensionManager.NewPortal( dimension3, dimension2 );
 			portal2.Position = new Vector3( 300.0f, 200.0f, 0.0f );
 			portal2.Rotation = Rotation.FromYaw( -75.0f );
 
-			var portal3 = DimensionManager.NewPortal( dimension4, dimension2 ); // new DimensionalPortal( dimension4, dimension2 );
+			var portal3 = DimensionManager.NewPortal( dimension4, dimension2 );
 			portal3.Position = new Vector3( -500.0f, 500.0f, 0.0f );
 			portal3.Rotation = Rotation.FromYaw( -45.0f + 180.0f );
 
-			RotatyPortal = DimensionManager.NewPortal( dimension3, dimension4 ); // new DimensionalPortal( dimension3, dimension4 );
+			RotatyPortal = DimensionManager.NewPortal( dimension3, dimension4 );
 			RotatyPortal.Position = new Vector3( -300.0f, -500.0f, 0.0f );
 			RotatyPortal.Rotation = Rotation.Random;
 
@@ -104,12 +105,6 @@ public partial class SpaceGame : Sandbox.Game
 				newBox.Rotation = Rotation.Random;
 				newBox.Position = pos + (newBox.Model.RenderBounds.Size.z * 0.5f) * newBox.Rotation.Down;
 			}
-
-			//var citizen = new DimensionalModelEntity();
-			//citizen.SetModel( "models/citizen/citizen.vmdl" );
-			//citizen.Position = portal.Rotation.Backward * 750.0f;
-			//citizen.Rotation = Rotation.LookAt( -citizen.Position.Normal, Vector3.Up );
-			//Dimension2.AddAndInitEntity( citizen );
 		}
 	}
 
@@ -129,10 +124,7 @@ public partial class SpaceGame : Sandbox.Game
 		rotAxis *= Rotation.RotateAroundAxis( Vector3.Up, Time.Delta * 30.0f );
 		RotatyPortal.Rotation *= Rotation.RotateAroundAxis( rotAxis, Time.Delta * 30.0f );
 
-		//var offset = new Vector3( MathF.Sin( Time.Now / 3.5f ) * 250.0f, MathF.Cos( Time.Now / 3.5f ) * 250.0f, MathF.Sin( Time.Now / 4.5f ) * 75.0f );
 		var offset = new Vector3( MathF.Sin( Time.Now / 3.5f ) * 250.0f, MathF.Cos( Time.Now / 3.5f ) * 250.0f, 0.0f );
-
-		//RotatyPortal.Rotation = Rotation.LookAt( offset.Normal, Vector3.Up ) * Rotation.FromYaw( 90.0f );
 		RotatyPortal.Position = originalPos + offset;
 	}
 

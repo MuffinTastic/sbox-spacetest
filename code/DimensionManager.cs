@@ -25,8 +25,6 @@ public partial class DimensionManager : Entity
 
 		if ( IsServer )
 		{
-			// DimensionsReady = WaitForDimensions();
-
 			Ready = true;
 		}
 	}

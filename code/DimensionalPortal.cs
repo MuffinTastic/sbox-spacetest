@@ -183,13 +183,9 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 	private Dimension _dimension;
 	private Dimension _targetDimension;
 	private Material PortalBlit;
-	private Vector2 _size;
-
-	private Vector3[] _vertexPositions;
 
 	private readonly object RenderLock = new object();
 
-	private int rendercount = 0;
 	private bool _doneRendering;
 
 	public void SetDoneRendering()
@@ -204,7 +200,6 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 	{
 		lock ( RenderLock )
 		{
-			rendercount = 0;
 			_doneRendering = false;
 		}
 	}
@@ -213,7 +208,6 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 	public SceneDimensionalPortal( int id, Vector2 size, DimensionalPortal parent, Dimension dimension, Dimension targetDimension ) : base( dimension.SceneWorld )
 	{
 		_id = id;
-		_size = size;
 		_parent = parent;
 		_dimension = dimension;
 		_targetDimension = targetDimension;
@@ -227,7 +221,6 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 	{
 		if ( Graphics.LayerType != SceneLayerType.Opaque )
 			return;
-
 
 		if ( _doneRendering )
 			return;
@@ -254,8 +247,6 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 
 		var materialAttributes = new RenderAttributes();
 
-		// Log.Info( $"{_id} {this} {_parent.NetworkIdent}, {flip}" );
-
 		if ( _dimension == Pawn.LocalDimension && SpaceGame.Debug )
 			DebugOverlay.Line( Position, Position + Rotation.Forward * 50.0f * (flip ? 1.0f : -1.0f), Color.Cyan, depthTest: false );
 
@@ -269,14 +260,6 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 			clip = -clip;
 		}
 
-		if ( !_parent.IsConnected( Pawn.LocalDimension ) )
-		{
-			//return;
-		}
-
-		//DebugOverlay.Sphere( Vector3.Zero, 5.0f, Color.Red, depthTest: false );
-		//DebugOverlay.Line( portalPlane.Normal * portalPlane.Distance, portalPlane.Normal * portalPlane.Distance + portalPlane.Normal * 100.0f, Color.Cyan, depthTest: false );
-
 		_targetDimension.SceneCamera.Attributes.SetCombo( "D_ENABLE_USER_CLIP_PLANE", true );
 		_targetDimension.SceneCamera.Attributes.Set( "EnableClipPlane", true );
 		_targetDimension.SceneCamera.Attributes.Set( "ClipPlane0", clip );
@@ -288,8 +271,6 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 
 		Graphics.RenderToTexture( _targetDimension.SceneCamera, renderTarget.ColorTarget );
 
-		//Graphics.Clear( false, true );
-
 		Graphics.RenderTarget = null;
 		
 		_targetDimension.SceneCamera.Attributes.Clear();
@@ -299,114 +280,5 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 		attributes.Set( "ColorBuffer", renderTarget.ColorTarget );
 
 		Graphics.Draw( vertices, vertices.Length, PortalBlit, attributes );
-
-		rendercount++;
 	}
 }
-
-
-
-
-
-/*
-public partial class DimensionalPortalRenderHook : RenderHook
-{
-	private static Material PortalBlit = Material.Load( "materials/portalblit.vmat" );
-	Dimension _dimension;
-
-	public DimensionalPortalRenderHook( Dimension dimension )
-	{
-		_dimension = dimension;
-	}
-
-	public override void OnFrame( SceneCamera target )
-	{
-		_dimension.UpdateSceneCameraFromGlobal();
-	}
-
-	public override void OnStage( SceneCamera target, Stage renderStage )
-	{
-		Log.Info( $"Start frame Dimension {_dimension}" );
-
-		if ( renderStage == Stage.AfterTransparent )
-		{
-			var connectedPortals = Entity.All.OfType<DimensionalPortal>()
-				.Where( p => p.IsConnected( _dimension ) )
-				.OrderBy( p => p.Position.Distance( target.Position ) );
-
-			foreach ( var portal in connectedPortals )
-			{
-				RenderPortal( target, portal );
-			}
-		}
-	}
-
-	private void RenderPortal( SceneCamera target, DimensionalPortal portal )
-	{
-		if ( portal.DoneRendering )
-			return;
-
-		portal.SetDoneRendering();
-
-		// TODO: Floating origin
-
-		var portalPlane = new Plane(
-			portal.Position,
-			portal.Rotation.Forward
-		);
-
-		var portalRotation = Rotation.LookAt( portalPlane.Normal, Vector3.Up );
-
-		var vertices = portal.VertexPositions.Select( v => new Vertex( portal.Position + v, Vector4.Zero, Color32.White ) ).ToArray();
-
-		var relative = target.Position - portal.Position;
-		var dot = relative.Dot( portalPlane.Normal );
-
-		Vector4 clip = new Vector4( portalPlane.Normal, portalPlane.Distance );
-		bool flip = portal.IsFirstDimension( _dimension );
-		float flipdot = flip ? dot : -dot;
-		bool front = flipdot > 0.0f;
-
-		var materialAttributes = new RenderAttributes();
-
-		if ( !front )
-		{
-			return;
-		}
-
-		if ( flip )
-		{
-			clip = -clip;
-		}
-
-		DebugOverlay.Sphere( Vector3.Zero, 5.0f, Color.Red, depthTest: false );
-		DebugOverlay.Line( portalPlane.Normal * portalPlane.Distance, portalPlane.Normal * portalPlane.Distance + portalPlane.Normal * 100.0f, Color.Cyan, depthTest: false );
-
-		target.Attributes.SetCombo( "D_ENABLE_USER_CLIP_PLANE", true );
-		target.Attributes.Set( "EnableClipPlane", true );
-		target.Attributes.Set( "ClipPlane0", clip );
-
-		using var renderTarget = RenderTarget.GetTemporary();
-
-		Graphics.RenderTarget = renderTarget;
-		Graphics.Clear( false, true );
-
-		var camera = portal.GetOtherDimension( _dimension ).SceneCamera;
-		Graphics.RenderToTexture( camera, renderTarget.ColorTarget );
-
-		Graphics.Clear( false, true );
-
-		Graphics.RenderTarget = null;
-
-		target.Attributes.Clear();
-
-		Graphics.Attributes.Set( "ColorBuffer", renderTarget.ColorTarget );
-
-		var recty = new Rect( Vector2.Zero, new Vector2( 1.0f, 1.0f ) );
-
-		Graphics.Draw( vertices, vertices.Length, PortalBlit );
-
-		var flipstring = flip ? "First" : "Second";
-		Log.Info( $"{flipstring} {portal}" );
-	}
-}*/

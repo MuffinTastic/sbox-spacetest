@@ -104,6 +104,5 @@ public partial class Pawn : DimensionalPhysicsEntity
 
 		if ( SceneModelManager is null ) return;
 		SceneModelManager.SetTransform( Transform );
-		//DebugOverlay.Sphere( Transform.Position, 5.0f, Color.Yellow, depthTest: false );
 	}
 }
