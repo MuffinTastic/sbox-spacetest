@@ -46,6 +46,15 @@ public partial class DimensionalModelEntity : DimensionalEntity
 		SceneModelManager.Init( Dimension );
 	}
 
+	protected override void OnDestroy()
+	{
+		if ( IsClient )
+		{
+			SceneModelManager?.Delete();
+			SceneModelManager = null;
+		}
+	}
+
 	public void SetModel( string model )
 	{
 		SetModel( Model.Load( model ) );

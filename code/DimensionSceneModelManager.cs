@@ -40,6 +40,18 @@ public class DimensionSceneModelManager
 		GenerateSceneModels();
 	}
 
+	public void Delete()
+	{
+		_main?.Delete();
+		_main = null;
+
+		_temporary?.Delete();
+		_temporary = null;
+
+		_mainDimension = null;
+		_temporaryDimension = null;
+	}
+
 	public void SetModel( Model model )
 	{
 		_model = model;
