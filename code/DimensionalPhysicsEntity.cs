@@ -84,11 +84,11 @@ public partial class DimensionalPhysicsEntity : DimensionalModelEntity
 
 			if ( !touching )
 			{
-				if ( _ignorePortal )
-					Log.Info( "Entered from the back, doing nothing..." );
-				else
+				//if ( _ignorePortal )
+				//	Log.Info( "Entered from the back, doing nothing..." );
+				//else
 				{
-					Log.Info( "Swhoomp" );
+					//Log.Info( "Swhoomp" );
 					EndTransition();
 					if ( _swapToNewDimension )
 					{
@@ -113,7 +113,7 @@ public partial class DimensionalPhysicsEntity : DimensionalModelEntity
 
 					if ( changed )
 					{
-						Log.Info( "Swap?:)" );
+						//Log.Info( "Swap?:)" );
 						MidTransitionSwap();
 						_swapToNewDimension = !_swapToNewDimension;
 					}

@@ -23,7 +23,7 @@ public partial class DimensionManager : Entity
 	{
 		Transmit = TransmitType.Always;
 
-		if ( IsServer )
+		if ( Game.IsServer )
 		{
 			Ready = true;
 		}
@@ -33,7 +33,7 @@ public partial class DimensionManager : Entity
 	{
 		base.ClientSpawn();
 
-		if ( IsClient )
+		if ( Game.IsClient )
 		{
 			Ready = true;
 		}
@@ -74,7 +74,7 @@ public partial class DimensionManager : Entity
 
 		await GameTask.WhenAll( tasks );
 
-		var realm = Host.IsServer ? "server" : "client";
+		var realm = Game.IsServer ? "server" : "client";
 		Log.Info( $"Waited {start} on {realm}" );
 	}
 }

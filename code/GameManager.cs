@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace SpaceTest;
 
-public partial class SpaceGame : Sandbox.Game
+public partial class SpaceGame : GameManager
 {
-	public new static SpaceGame Current => Game.Current as SpaceGame;
+	public new static SpaceGame Current => GameManager.Current as SpaceGame;
 
 	public static bool Debug = true;
 
@@ -22,7 +22,7 @@ public partial class SpaceGame : Sandbox.Game
 
 	public override async void Spawn()
 	{
-		if ( IsServer )
+		if ( Game.IsServer )
 		{
 			_ = new GameHud();
 
@@ -115,7 +115,7 @@ public partial class SpaceGame : Sandbox.Game
 
 	public override void ClientSpawn()
 	{
-		Map.Camera.AddHook( new DimensionBlitHook() );
+		Camera.Main.AddHook( new DimensionBlitHook() );
 	}
 
 	[Event.Tick.Server]
@@ -131,7 +131,7 @@ public partial class SpaceGame : Sandbox.Game
 	/// <summary>
 	/// A client has joined the server. Make them a pawn to play with
 	/// </summary>
-	public override async void ClientJoined( Client client )
+	public override async void ClientJoined( IClient client )
 	{
 		base.ClientJoined( client );
 
@@ -173,7 +173,7 @@ public partial class SpaceGame : Sandbox.Game
 	{
 		if ( ConsoleSystem.Caller?.Pawn is Pawn pawn )
 		{
-			pawn.CameraMode.FieldOfView = fov;
+			Camera.Main.FieldOfView = fov;
 		}
 	}
 }
@@ -188,7 +188,7 @@ public partial class SpaceGame : Sandbox.Game
 
 public override void Spawn()
 {
-	if ( Host.IsServer )
+	if ( Game.IsServer )
 	{
 
 		var light = new PointLightEntity();
@@ -215,7 +215,7 @@ AlternateDimension AlternateDimension;
 
 public override void ClientSpawn()
 {
-	if ( Host.IsClient )
+	if ( Game.IsClient )
 	{
 		SpaceSky = new SpaceSky( Map.Scene );
 		AlternateDimension = new AlternateDimension();
@@ -235,7 +235,7 @@ public override void ClientSpawn()
 			while ( pos.Distance( Vector3.Zero ) < AlternateDimension.MaxSize + bsize );
 
 			var rot = Rotation.Random;
-			var scl = Rand.Float( 0.5f, 2.5f );
+			var scl = Game.Random.Float( 0.5f, 2.5f );
 			var m = new SceneModel( Map.Scene, model, new Transform( pos, rot, scl ) );
 			m.RenderingEnabled = false;
 			AlternateDimension.Register( m );

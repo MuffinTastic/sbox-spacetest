@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SpaceTest;
-
+/*
 public class TestCamera : CameraMode
 {
 	[ConVar.Replicated]
@@ -100,3 +100,4 @@ public class TestCamera : CameraMode
 		base.BuildInput( input );
 	}
 }
+*/

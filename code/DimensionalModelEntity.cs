@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Sandbox;
+using Sandbox.Diagnostics;
 
 namespace SpaceTest;
 
@@ -48,7 +49,7 @@ public partial class DimensionalModelEntity : DimensionalEntity
 
 	protected override void OnDestroy()
 	{
-		if ( IsClient )
+		if ( Game.IsClient )
 		{
 			SceneModelManager?.Delete();
 			SceneModelManager = null;
@@ -69,7 +70,7 @@ public partial class DimensionalModelEntity : DimensionalEntity
 		
 		DimensionModel = model;
 
-		if ( IsClient )
+		if ( Game.IsClient )
 		{
 			if ( SceneModelManager is null )
 				return;
@@ -95,7 +96,7 @@ public partial class DimensionalModelEntity : DimensionalEntity
 		SceneModelManager.SetModel( newModel );
 	}
 
-	[Event.Frame]
+	[Event.Client.Frame]
 	public void OnFrame()
 	{
 		if ( SceneModelManager is null ) return;

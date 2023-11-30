@@ -68,7 +68,7 @@ PS
     RenderState( DepthEnable, true );
 
 
-	CreateTexture2D( _ColorBuffer ) < Attribute( "ColorBuffer" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
+	CreateTexture2D( g_tColorBuffer ) < Attribute( "ColorBuffer" ); SrgbRead( false ); AddressU( CLAMP ); AddressV( CLAMP ); >;
 
 	//
 	// Main
@@ -76,7 +76,7 @@ PS
 	float4 MainPs( PixelInput i ) : SV_Target0
 	{
 		float2 screenUv = CalculateViewportUv(i.vPositionSs.xy);
-		float4 color = Tex2D(_ColorBuffer, screenUv) * float4(0.1, 0.1, 0.1, 1.0);
+		float4 color = Tex2D(g_tColorBuffer, screenUv) * float4(0.1, 0.1, 0.1, 1.0);
 		return color;// * float4(0.1, 0.1, 0.1, 1.0);
 	}
 }

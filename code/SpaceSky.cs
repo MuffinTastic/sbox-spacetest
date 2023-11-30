@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,47 +29,47 @@ public partial class SpaceSky
 
 	public void Randomize()
 	{
-		var seed = Rand.Float( -8.0f, 8.0f );
-		var skyFogSeed2 = Rand.Float( -8.0f, 8.0f );
+		var seed = Game.Random.Float( -8.0f, 8.0f );
+		var skyFogSeed2 = Game.Random.Float( -8.0f, 8.0f );
 
-		var skyHue = Rand.Float( 0.0f, 360.0f );
+		var skyHue = Game.Random.Float( 0.0f, 360.0f );
 		var skyHsv = new ColorHsv( skyHue, 1.0f, 0.1f );
 
-		var skyFogHue1 = skyHue + 180.0f + Rand.Float( -15.0f, 15.0f );
+		var skyFogHue1 = skyHue + 180.0f + Game.Random.Float( -15.0f, 15.0f );
 		if ( skyFogHue1 > 360.0f ) skyFogHue1 -= 360.0f;
 		if ( skyFogHue1 < 0.0f ) skyFogHue1 += 360.0f;
 		var skyFogHsv1 = new ColorHsv( skyFogHue1, 1.0f, 1.0f );
 
-		var skyFogHue2 = skyFogHue1 + Rand.Float( -90.0f, 90.0f );
+		var skyFogHue2 = skyFogHue1 + Game.Random.Float( -90.0f, 90.0f );
 		if ( skyFogHue2 > 360.0f ) skyFogHue2 -= 360.0f;
 		if ( skyFogHue2 < 0.0f ) skyFogHue2 += 360.0f;
 		var skyFogHsv2 = new ColorHsv( skyFogHue2, 1.0f, 1.0f );
 
-		var fogNoiseDensity1 = 6.0f /* default */ + Rand.Float( -1.0f, 1.5f );
-		var fogNoiseDensity2 = 6.0f /* default */ + Rand.Float( -1.0f, 1.0f );
+		var fogNoiseDensity1 = 6.0f /* default */ + Game.Random.Float( -1.0f, 1.5f );
+		var fogNoiseDensity2 = 6.0f /* default */ + Game.Random.Float( -1.0f, 1.0f );
 
 		var fogNoiseParams = new Vector4
 		(
-			0.75f  + Rand.Float( -0.1f, 0.1f  ),
-			6.0f   + Rand.Float( -0.5f, 0.5f  ),
-			0.795f + Rand.Float( -.01f, 0.01f ),
-			2.08f  + Rand.Float( -0.1f, 0.1f  )
+			0.75f  + Game.Random.Float( -0.1f, 0.1f  ),
+			6.0f   + Game.Random.Float( -0.5f, 0.5f  ),
+			0.795f + Game.Random.Float( -.01f, 0.01f ),
+			2.08f  + Game.Random.Float( -0.1f, 0.1f  )
 		);
 
 		var fogNoiseMaskParams = new Vector4
 		(
-			0.33f + Rand.Float( -0.1f, 0.1f ),
-			6.0f + Rand.Float( -0.5f, 0.5f ),
-			0.628f + Rand.Float( -.01f, 0.01f ),
-			2.11f + Rand.Float( -0.1f, 0.1f )
+			0.33f + Game.Random.Float( -0.1f, 0.1f ),
+			6.0f + Game.Random.Float( -0.5f, 0.5f ),
+			0.628f + Game.Random.Float( -.01f, 0.01f ),
+			2.11f + Game.Random.Float( -0.1f, 0.1f )
 		);
 
 		var fogNoiseMaskParams2 = new Vector4
 		(
-			0.07f + Rand.Float( -0.1f, 0.1f ),
-			-0.001f + Rand.Float( -0.001f, 0.001f ),
-			0.628f + Rand.Float( -.01f, 0.01f ),
-			2.5f + Rand.Float( -0.1f, 0.1f )
+			0.07f + Game.Random.Float( -0.1f, 0.1f ),
+			-0.001f + Game.Random.Float( -0.001f, 0.001f ),
+			0.628f + Game.Random.Float( -.01f, 0.01f ),
+			2.5f + Game.Random.Float( -0.1f, 0.1f )
 		);
 
 		SkyBox.Attributes.Set( "Seed", seed );

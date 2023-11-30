@@ -6,12 +6,7 @@ namespace SpaceTest;
 
 public partial class Pawn : DimensionalPhysicsEntity
 {
-	public static Dimension LocalDimension => (Local.Pawn as Pawn)?.Dimension;
-
-	public CameraMode CameraMode {
-		get => Components.Get<CameraMode>();
-		set => Components.Add( value );
-	}
+	public static Dimension LocalDimension => (Game.LocalPawn as Pawn)?.Dimension;
 
 	public Pawn()
 	{
@@ -22,6 +17,9 @@ public partial class Pawn : DimensionalPhysicsEntity
 	{
 
 	}
+
+	[ClientInput] public Vector3 InputDirection { get; protected set; }
+	[ClientInput] public Angles ViewAngles { get; set; }
 
 	/// <summary>
 	/// Called when the entity is first created 
@@ -38,32 +36,36 @@ public partial class Pawn : DimensionalPhysicsEntity
 	}
 	public void Respawn()
 	{
-
 		EnableShadowInFirstPerson = true;
-
-		CameraMode = new TestCamera();
 	}
 
-	public override void BuildInput( InputBuilder inputBuilder )
+	public override void BuildInput()
 	{
-		if ( Local.Client.Components.Get<DevCamera>() is not null )
+		if ( Game.LocalClient.Components.Get<DevCamera>() is not null )
 		{
 			return;
 		}
+
+		InputDirection = Input.AnalogMove;
+
+		var look = Input.AnalogLook;
+
+		var viewAngles = ViewAngles;
+		viewAngles += look;
+		ViewAngles = viewAngles.Normal;
 	}
 
 	/// <summary>
 	/// Called every tick, clientside and serverside.
 	/// </summary>
-	public override void Simulate( Client cl )
+	public override void Simulate( IClient cl )
 	{
 		base.Simulate( cl );
 
-		Rotation = Input.Rotation;
-		EyeRotation = Rotation;
+		Rotation = ViewAngles.ToRotation();
 
 		// build movement from the input values
-		var movement = new Vector3( Input.Forward, Input.Left, 0 ).Normal;
+		var movement = InputDirection.Normal;
 
 		// rotate it to the direction we're facing
 		Velocity = Rotation * movement;
@@ -80,7 +82,7 @@ public partial class Pawn : DimensionalPhysicsEntity
 			Position = helper.Position;
 		}
 
-		if ( IsClient && Input.Pressed( InputButton.Reload ) )
+		if ( Game.IsClient && Input.Pressed( InputButton.Reload ) )
 		{
 			SpaceSky.RandomizeSkies();
 		}
@@ -94,13 +96,26 @@ public partial class Pawn : DimensionalPhysicsEntity
 	/// <summary>
 	/// Called every frame on the client
 	/// </summary>
-	public override void FrameSimulate( Client cl )
+	public override void FrameSimulate( IClient cl )
 	{
 		base.FrameSimulate( cl );
 
-		// Update rotation every frame, to keep things smooth
-		Rotation = Input.Rotation;
-		EyeRotation = Rotation;
+		Camera.Main.Rotation = ViewAngles.ToRotation();
+		Camera.Main.FieldOfView = Screen.CreateVerticalFieldOfView( Game.Preferences.FieldOfView );
+		Camera.Main.FirstPersonViewer = null;
+
+		Vector3 targetPos;
+
+		var center = Position + Vector3.Up * 64;
+
+		var pos = center;
+		var rot = Camera.Rotation;
+
+		float distance = 80.0f * Scale;
+		targetPos = pos + rot.Right * ((Model.RenderBounds.Mins.x + 32) * Scale / 2);
+		targetPos += rot.Forward * -distance;
+
+		Camera.Main.Position = targetPos;
 
 		if ( SceneModelManager is null ) return;
 		SceneModelManager.SetTransform( Transform );

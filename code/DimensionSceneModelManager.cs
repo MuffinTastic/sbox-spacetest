@@ -21,7 +21,7 @@ public class DimensionSceneModelManager
 
 	public DimensionSceneModelManager( DimensionalModelEntity entity, Model model )
 	{
-		Host.AssertClient();
+		Game.AssertClient();
 
 		_entity = entity;
 		_model = model;
@@ -31,7 +31,7 @@ public class DimensionSceneModelManager
 
 	public void Init( Dimension dimension )
 	{
-		Host.AssertClient();
+		Game.AssertClient();
 
 		if ( _main is not null )
 			throw new InvalidOperationException( "Main sceneobject was not null at initialization" );
@@ -80,7 +80,7 @@ public class DimensionSceneModelManager
 
 	private void Swap()
 	{
-		Host.AssertClient();
+		Game.AssertClient();
 
 		var swapDimension = _mainDimension;
 		_mainDimension = _temporaryDimension;
@@ -93,7 +93,7 @@ public class DimensionSceneModelManager
 
 	public void BeginTransition( Dimension dimension )
 	{
-		Host.AssertClient();
+		Game.AssertClient();
 
 		if ( _main is null )
 			throw new InvalidOperationException( "Main sceneobject was null at transition start" );
@@ -106,7 +106,7 @@ public class DimensionSceneModelManager
 
 	public void MidTransitionSwap()
 	{
-		Host.AssertClient();
+		Game.AssertClient();
 
 		if ( _main is null )
 			throw new InvalidOperationException( "Main sceneobject was null during mid transition swap" );
@@ -118,7 +118,7 @@ public class DimensionSceneModelManager
 
 	public void EndTransition()
 	{
-		Host.AssertClient();
+		Game.AssertClient();
 
 		if ( _main is null )
 			throw new InvalidOperationException( "Main sceneobject was null during transition finalization" );
@@ -133,7 +133,7 @@ public class DimensionSceneModelManager
 
 	public void SetTransform( Transform transform )
 	{
-		Host.AssertClient();
+		Game.AssertClient();
 
 		if ( _main is not null )
 			_main.Transform = transform;

@@ -125,7 +125,7 @@ public partial class DimensionalPortal : DimensionalEntity
 		//Rotation = Rotation.LookAt( portalNormal, Vector3.Up );
 	}
 
-	[Event.Frame]
+	[Event.Client.Frame]
 	private void OnFrame()
 	{
 		if ( _scenePortal1 is null || _scenePortal2 is null ) return;
@@ -183,6 +183,7 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 	private Dimension _dimension;
 	private Dimension _targetDimension;
 	private Material PortalBlit;
+	private RenderTarget rt;
 
 	private readonly object RenderLock = new object();
 
@@ -213,8 +214,12 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 		_targetDimension = targetDimension;
 		PortalBlit = Material.Load( "materials/portalblit.vmat" ).CreateCopy();
 
+		Batchable = false;
+
 		Flags.IsOpaque = true;
 		Flags.IsTranslucent = false;
+
+		rt = RenderTarget.From( Texture.CreateRenderTarget( "wtfe", ImageFormat.Default, Screen.Size ) );
 	}
 
 	public override void RenderSceneObject()
@@ -243,12 +248,15 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 		Vector4 clip = new Vector4( portalPlane.Normal, portalPlane.Distance );
 
 		bool flip = _id == 0;
-		bool front = _parent.IsInFront( _dimension, CurrentView.Position );
+		bool front = _parent.IsInFront( _dimension, Camera.Main.Position );
 
 		var materialAttributes = new RenderAttributes();
 
 		if ( _dimension == Pawn.LocalDimension && SpaceGame.Debug )
+		{
+			DebugOverlay.Line( portalOrigin, portalOrigin + portalPlane.Distance * 50.0f, Color.Orange, depthTest: false );
 			DebugOverlay.Line( Position, Position + Rotation.Forward * 50.0f * (flip ? 1.0f : -1.0f), Color.Cyan, depthTest: false );
+		}
 
 		if ( !front )
 		{
@@ -264,21 +272,19 @@ public partial class SceneDimensionalPortal : SceneCustomObject
 		_targetDimension.SceneCamera.Attributes.Set( "EnableClipPlane", true );
 		_targetDimension.SceneCamera.Attributes.Set( "ClipPlane0", clip );
 
-		using var renderTarget = RenderTarget.GetTemporary();
+		Graphics.RenderTarget = rt;
+		Graphics.Clear( false, false );
 
-		Graphics.RenderTarget = renderTarget;
-		Graphics.Clear( false, true );
-
-		Graphics.RenderToTexture( _targetDimension.SceneCamera, renderTarget.ColorTarget );
+		Graphics.RenderToTexture( _targetDimension.SceneCamera, rt.ColorTarget );
 
 		Graphics.RenderTarget = null;
-		
-		_targetDimension.SceneCamera.Attributes.Clear();
 
 		var attributes = new RenderAttributes();
 		attributes.SetCombo( "D_FRONT", flip );
-		attributes.Set( "ColorBuffer", renderTarget.ColorTarget );
+		attributes.Set( "ColorBuffer", rt.ColorTarget );
 
 		Graphics.Draw( vertices, vertices.Length, PortalBlit, attributes );
+
+		_targetDimension.SceneCamera.Attributes.Clear();
 	}
 }
