@@ -6,6 +6,7 @@ Secret sauce:
 - No cheap tricks - does **not** teleport the player to different locations. You're truly in a different dimension!
 - Has custom entities that own multiple scene objects for rendering purposes
 - Uses fun math to simplify detection for the player entering the portals
+- Uses custom procedural sky shaders, with random values for each dimension
 
 Seeing as it's likely broken in modern s&box versions, here's a video:
 
